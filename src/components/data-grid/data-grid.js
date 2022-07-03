@@ -78,7 +78,7 @@ export function DataGrid() {
     </>
     )
   }
-  const sortingId = (col) => {
+  const sortingId = (any) => {
     if(orderId === "desc"){
       const sorted = [...items].sort((a, b) => (a.id > b.id ? -1 : 1))
       setOrderId("asc");
@@ -90,7 +90,7 @@ export function DataGrid() {
     }
   }
 
-  const sortingTitle = (col) => {
+  const sortingTitle = (any) => {
     if(orderTitle === "desc"){
       const sorted = [...items].sort((a, b) => (a.title > b.title ? -1 : 1))
       setOrderTitle("asc");
