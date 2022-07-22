@@ -1,17 +1,28 @@
 import React, { useEffect, useState } from "react"
 import { Button } from "../button"
 import { FormItem } from "../form-item"
+import Pagination from '../pagination';
 
 export function DataGrid() {
 
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemPerPage, setitemPerPage] = useState(20)
+  const [orderId, setOrderId] = useState("desc")
+  const [orderTitle, setOrderTitle] = useState("desc")
+  
 
   const [todo, setTodo] = useState(null)
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [itemPerPage, setitemPerPage])
+
+  const indexOfLastitem = currentPage * itemPerPage;
+  const indexOfFirstitem = indexOfLastitem - itemPerPage;
+  const currentitem = items.slice(indexOfFirstitem, indexOfLastitem);
+  const totalPagesNum = Math.ceil(items.length / itemPerPage)
 
   const loadData = () => {
     setLoading(true)
@@ -29,7 +40,7 @@ export function DataGrid() {
   const renderBody = () => {
     return (
       <React.Fragment>
-        {items.sort((a, b) => b.id - a.id).map((item, i) => {
+        {currentitem.map((item, i) => {
           return (
             <tr key={i}>
               <th scope="row" >{item.id}</th>
@@ -53,8 +64,8 @@ export function DataGrid() {
       <table className="table">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">Başlık</th>
+            <th onClick={() => sortingId(items.id)} scope="col">#</th>
+            <th onClick={() => sortingTitle(items.title)} scope="col">Başlık</th>
             <th scope="col">Durum</th>
             <th scope="col">Aksiyonlar</th>
           </tr>
@@ -63,8 +74,32 @@ export function DataGrid() {
           {renderBody()}
         </tbody>
       </table>
+      <Pagination pages = {totalPagesNum} setCurrentPage={setCurrentPage}/>
     </>
     )
+  }
+  const sortingId = (any) => {
+    if(orderId === "desc"){
+      const sorted = [...items].sort((a, b) => (a.id > b.id ? -1 : 1))
+      setOrderId("asc");
+      setItems(sorted);
+    }else{
+      const sorted = [...items].sort((a, b) => (a.id > b.id ? 1 : -1))
+      setOrderId("desc");
+      setItems(sorted);
+    }
+  }
+
+  const sortingTitle = (any) => {
+    if(orderTitle === "desc"){
+      const sorted = [...items].sort((a, b) => (a.title > b.title ? -1 : 1))
+      setOrderTitle("asc");
+      setItems(sorted);
+    }else{
+      const sorted = [...items].sort((a, b) => (a.title > b.title ? 1 : -1))
+      setOrderTitle("desc");
+      setItems(sorted);
+    }
   }
 
   const saveChanges = () => {
